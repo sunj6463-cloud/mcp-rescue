@@ -12,7 +12,6 @@ class ErrorCategory(Enum):
     UPSTREAM_UNAVAILABLE = "upstream_unavailable"
     BUSINESS_RULE = "business_rule"
     UNKNOWN = "unknown"
-
 class RecoveryAction(Enum):
     """Recovery actions for the MCP Rescue system."""
     RETRY = "retry"
