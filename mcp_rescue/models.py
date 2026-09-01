@@ -21,8 +21,8 @@ class RecoveryAction(Enum):
     REPLAN = "replan"
     ASK_USER = "ask_user"
     STOP = "stop"
-
-@dataclass
+# 拆分一下
+@dataclass   
 class RescueError:
     category: ErrorCategory
     action: RecoveryAction
@@ -30,3 +30,15 @@ class RescueError:
     message: str
     confidence: float
 
+@dataclass
+class NormalizedError:
+    category: ErrorCategory
+    message: str
+    confidence: float
+
+
+
+@dataclass
+class RecoveryDecision:
+    action: RecoveryAction
+    retryable: bool
