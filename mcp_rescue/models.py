@@ -42,3 +42,8 @@ class NormalizedError:
 class RecoveryDecision:
     action: RecoveryAction
     retryable: bool
+
+
+@dataclass
+class RawError:
+    message: str

@@ -194,3 +194,14 @@ def test_rescue_error_upstream_unavailable_business_rule():
     assert result.retryable is False
     assert result.confidence == 1.0
     assert result.message == "Booking date must be in the future"
+
+def test_rescue_error_from_http_dict():
+    result = rescue_error(
+        {
+            "status":429,
+            "message":"Too Many Requests"
+        }
+    )
+
+    assert result.category == ErrorCategory.RATE_LIMIT
+    assert result.action == RecoveryAction.BACKOFF
