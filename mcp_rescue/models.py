@@ -42,6 +42,7 @@ class NormalizedError:
 class RecoveryDecision:
     action: RecoveryAction
     retryable: bool
+    reason : str 
 
 
 @dataclass
@@ -55,3 +56,5 @@ class ToolInfo:
     read_only: bool
     idempotent: bool
     destructive: bool
+
+
