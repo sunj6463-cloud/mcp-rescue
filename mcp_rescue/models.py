@@ -47,3 +47,11 @@ class RecoveryDecision:
 @dataclass
 class RawError:
     message: str
+
+
+@dataclass
+class ToolInfo:
+    name: str
+    read_only: bool
+    idempotent: bool
+    destructive: bool

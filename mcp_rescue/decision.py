@@ -3,10 +3,11 @@ from mcp_rescue.models import (
     RecoveryAction,
     NormalizedError,
     RecoveryDecision,
+    ToolInfo
 )
 
 
-def decide(error:NormalizedError) ->RecoveryDecision:
+def decide(error:NormalizedError ,tool: ToolInfo) ->RecoveryDecision:
     if error.category == ErrorCategory.RATE_LIMIT:
         return RecoveryDecision(
             action=RecoveryAction.BACKOFF,
@@ -34,10 +35,17 @@ def decide(error:NormalizedError) ->RecoveryDecision:
             retryable=False,                       
         )
     elif error.category == ErrorCategory.TRANSIENT_NETWORK:
-        return RecoveryDecision(
-            action=RecoveryAction.RETRY,
-            retryable=True,           
-        )
+        if tool.idempotent or tool.read_only:
+            return RecoveryDecision(
+                action=RecoveryAction.RETRY,
+                retryable=True
+            )
+
+        else:
+            return RecoveryDecision(
+                action=RecoveryAction.ASK_USER,
+                retryable=False
+            )
 
     elif error.category == ErrorCategory.UPSTREAM_UNAVAILABLE:
         return RecoveryDecision(

@@ -1,6 +1,6 @@
 from mcp_rescue.classifier import rescue_error
 from mcp_rescue.models import ErrorCategory, RecoveryAction, RescueError
-
+from mcp_rescue.models import ToolInfo
 # def test_classify_error_rate_limit():
 #     result = classify_error("429 Too Many Requests")
 #     assert result.category == ErrorCategory.RATE_LIMIT
@@ -102,61 +102,73 @@ from mcp_rescue.models import ErrorCategory, RecoveryAction, RescueError
 
 
 def test_rescue_error_rate_limit():
-    result = rescue_error("429 Too Many Requests")
+    result = rescue_error("429 Too Many Requests",tool = None)
     assert result.category == ErrorCategory.RATE_LIMIT
     assert result.action == RecoveryAction.BACKOFF
     assert result.retryable is True
     assert result.message == "429 Too Many Requests"
 
 def test_rescue_error_unknown():
-    result = rescue_error("unknown")
+    result = rescue_error("unknown",tool = None)
     assert result.category == ErrorCategory.UNKNOWN
     assert result.action == RecoveryAction.STOP
     assert result.retryable is False
 
 def test_rescue_error_authentication():
-    result = rescue_error("401 Unauthorized")
+    result = rescue_error("401 Unauthorized",tool = None)
     assert result.category == ErrorCategory.AUTHENTICATION 
     assert result.action == RecoveryAction.REAUTHENTICATE
     assert result.retryable is False
     assert result.message == "401 Unauthorized"
 
 def test_rescue_error_authentication_code():
-    result = rescue_error("401")
+    result = rescue_error("401",tool = None)
     assert result.category == ErrorCategory.AUTHENTICATION 
     assert result.action == RecoveryAction.REAUTHENTICATE
     assert result.retryable is False
 
 def test_rescue_error_permission():
-    result = rescue_error("403 Forbidden")
+    result = rescue_error("403 Forbidden",tool = None)
     assert result.category == ErrorCategory.PERMISSION
     assert result.action == RecoveryAction.STOP
     assert result.retryable is False
     assert result.message == "403 Forbidden"
 
 def test_rescue_error_not_found():
-    result = rescue_error("404 Not Found")
+    result = rescue_error("404 Not Found",tool = None)
     assert result.category == ErrorCategory.NOT_FOUND
     assert result.action == RecoveryAction.STOP
     assert result.retryable is False
     assert result.message == "404 Not Found"
 
 def test_rescue_error_invalid_argument():
-    result = rescue_error("Invalid argument provided")
+    result = rescue_error("Invalid argument provided",tool = None)
     assert result.category == ErrorCategory.INVALID_ARGUMENT
     assert result.action == RecoveryAction.REPAIR_ARGUMENTS
     assert result.retryable is False
     assert result.message == "Invalid argument provided"
 
 def test_rescue_error_bad_request():
-    result = rescue_error("400 Bad Request")
+    result = rescue_error("400 Bad Request",tool = None)
     assert result.category == ErrorCategory.INVALID_ARGUMENT
     assert result.action == RecoveryAction.REPAIR_ARGUMENTS
     assert result.retryable is False
     assert result.message == "400 Bad Request"
 
 def test_rescue_error_transient_network():
-    result = rescue_error("Transient network error occurred")
+        
+    tool = ToolInfo(
+        name="get_weather",
+        read_only=True,
+        idempotent=True,
+        destructive=False,
+    )
+
+    result = rescue_error(
+        "Transient network error occurred",
+        tool= tool
+    )
+
     assert result.category == ErrorCategory.TRANSIENT_NETWORK
     assert result.action == RecoveryAction.RETRY
     assert result.retryable is True
@@ -164,7 +176,7 @@ def test_rescue_error_transient_network():
 
 
 def test_rescue_error_upstream_unavailable():
-    result = rescue_error("503 Service Unavailable")
+    result = rescue_error("503 Service Unavailable",tool = None)
     assert result.category == ErrorCategory.UPSTREAM_UNAVAILABLE
     assert result.action == RecoveryAction.BACKOFF
     assert result.retryable is True
@@ -172,7 +184,7 @@ def test_rescue_error_upstream_unavailable():
 
 
 def test_rescue_error_upstream_unavailable_code():
-    result = rescue_error("502")
+    result = rescue_error("502",tool = None)
     assert result.category == ErrorCategory.UPSTREAM_UNAVAILABLE
     assert result.action == RecoveryAction.BACKOFF
     assert result.retryable is True
@@ -180,7 +192,7 @@ def test_rescue_error_upstream_unavailable_code():
 
 
 def test_rescue_error_upstream_unavailable_service():
-    result = rescue_error("Service Unavailable")
+    result = rescue_error("Service Unavailable",tool = None)
     assert result.category == ErrorCategory.UPSTREAM_UNAVAILABLE
     assert result.action == RecoveryAction.BACKOFF
     assert result.retryable is True
@@ -188,7 +200,7 @@ def test_rescue_error_upstream_unavailable_service():
 
 
 def test_rescue_error_upstream_unavailable_business_rule():
-    result = rescue_error("Booking date must be in the future")
+    result = rescue_error("Booking date must be in the future",tool = None)
     assert result.category == ErrorCategory.BUSINESS_RULE
     assert result.action == RecoveryAction.ASK_USER
     assert result.retryable is False
@@ -200,8 +212,26 @@ def test_rescue_error_from_http_dict():
         {
             "status":429,
             "message":"Too Many Requests"
-        }
+        },tool = None
     )
 
     assert result.category == ErrorCategory.RATE_LIMIT
     assert result.action == RecoveryAction.BACKOFF
+
+
+def test_network_error_for_non_idempotent_tool():
+
+    tool = ToolInfo(
+        name="send_email",
+        read_only=False,
+        idempotent=False,
+        destructive=False,
+    )
+
+    result = rescue_error(
+        "connection timeout",
+        tool=tool
+    )
+
+    assert result.action == RecoveryAction.ASK_USER
+    assert result.retryable is False
