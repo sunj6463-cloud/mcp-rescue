@@ -1,6 +1,8 @@
 from mcp_rescue.models import RawError
 
 def parse_error(error) -> RawError:
+    if isinstance(error,RawError):
+        return error
     if isinstance(error, str):
         return RawError(
             message=error

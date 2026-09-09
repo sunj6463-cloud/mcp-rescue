@@ -1,4 +1,4 @@
-from mcp_rescue.models import ErrorCategory, RecoveryAction, RescueError
+from mcp_rescue.models import ErrorCategory, RecoveryAction, RescueError,RawError
 from mcp_rescue.normalizer import normalize_error
 from mcp_rescue.decision import decide
 from mcp_rescue.parser import parse_error
