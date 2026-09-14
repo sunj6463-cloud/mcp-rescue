@@ -15,6 +15,15 @@ def booking(date: str) -> str:
         raise ToolError("Booking date must be in the future")
     return f"Booked for {date}"
 
+@mcp.tool()
+def weather_timeout() -> str:
+    raise ToolError("connection timeout")
+
+
+@mcp.tool()
+def send_email_timeout() -> str:
+    raise ToolError("connection timeout")
+
 
 if __name__ == "__main__":
     mcp.run()
