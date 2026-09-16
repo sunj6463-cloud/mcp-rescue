@@ -58,7 +58,7 @@ For the Qwen demo:
 python -m pip install "mcp-rescue[qwen]"
 
 After installation, you can use MCP-Rescue in your Python project.
-
+```
 
 ## Quick start
 
@@ -93,6 +93,7 @@ if result.is_error:
 
     if allow_automatic_retry(rescued):
         print("Automatic retry is allowed.")
+        
 ```
 
 Output:
