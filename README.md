@@ -47,7 +47,7 @@ Install the MCP dependency and test runner:
 python -m pip install "mcp==2.2.0" pytest
 ```
 
-Run the examples and commands below from the repository root. Packaging metadata in `pyproject.toml` is not yet configured; these instructions use the source checkout directly.
+Run the examples and commands below from the repository root. 
 
 ## Quick start
 
