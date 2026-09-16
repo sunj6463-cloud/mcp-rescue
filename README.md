@@ -1,6 +1,6 @@
 # MCP-Rescue
 
-A lightweight semantic recovery layer for MCP tool failures.
+A lightweight semantic error recovery layer for MCP tool failures, providing tool-aware retry decisions and structured recovery actions for LLM agents.
 
 MCP-Rescue turns MCP tool errors into structured recovery decisions. It combines error classification with tool metadata so an agent or runtime can decide whether to retry, repair arguments, ask the user, or stop.
 
