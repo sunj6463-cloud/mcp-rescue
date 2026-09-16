@@ -41,13 +41,24 @@ Or on Windows PowerShell:
 .\.venv\Scripts\Activate.ps1
 ```
 
-Install the MCP dependency and test runner:
+
+## Installation
+
+Install MCP-Rescue from PyPI:
 
 ```bash
-python -m pip install "mcp==2.2.0" pytest
-```
+python -m pip install mcp-rescue
 
-Run the examples and commands below from the repository root. 
+For development:
+
+python -m pip install "mcp-rescue[dev]"
+
+For the Qwen demo:
+
+python -m pip install "mcp-rescue[qwen]"
+
+After installation, you can use MCP-Rescue in your Python project.
+
 
 ## Quick start
 
@@ -209,7 +220,7 @@ The server deliberately rejects that fixed date to demonstrate a business-rule f
 To run the demo, install the additional dependency:
 
 ```bash
-python -m pip install "openai==3.13.0"
+python -m pip install "mcp-rescue[qwen]"
 ```
 
 Set `DASHSCOPE_API_KEY` in your environment, then run from the repository root:
@@ -249,4 +260,5 @@ The suite covers parsing, normalization, recovery decisions, tool-aware retry sa
 
 ## Project status
 
-MCP-Rescue is an early-stage project focused on error normalization, structured recovery decisions, and agent integration. MCP-Rescue is currently preparing for its first `v0.1.0` release.
+MCP-Rescue is an early-stage project focused on error normalization, structured recovery decisions, and agent integration. MCP-Rescue is currently released as v0.1.0.
+Future work includes broader recovery policies, runtime integrations, and more agent framework examples.
