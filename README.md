@@ -49,16 +49,21 @@ Install MCP-Rescue from PyPI:
 ```bash
 python -m pip install mcp-rescue
 
+```
 For development:
 
+
+```bash
 python -m pip install "mcp-rescue[dev]"
 
+```
 For the Qwen demo:
 
+```bash
 python -m pip install "mcp-rescue[qwen]"
+```
 
 After installation, you can use MCP-Rescue in your Python project.
-```
 
 ## Quick start
 
@@ -93,7 +98,7 @@ if result.is_error:
 
     if allow_automatic_retry(rescued):
         print("Automatic retry is allowed.")
-        
+
 ```
 
 Output:
