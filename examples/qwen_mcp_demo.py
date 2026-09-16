@@ -6,8 +6,9 @@ import sys
 from openai import OpenAI
 from mcp import Client, StdioServerParameters
 
-from mcp_rescue.adapters.mcp import parse_mcp_result
-from mcp_rescue.classifier import rescue_error
+from mcp_rescue.api import rescue_mcp_result
+
+
 from mcp_rescue.models import ToolInfo
 from mcp_rescue.runtime import allow_automatic_retry
 
@@ -168,8 +169,6 @@ async def main():
             # 6. MCP result -> RawError
             # -------------------------
 
-            raw = parse_mcp_result(result)
-
             # Get safety metadata
             tool_info = TOOL_INFO.get(tool_name)
 
@@ -177,8 +176,8 @@ async def main():
             # 7. MCP-Rescue
             # -------------------------
 
-            rescued = rescue_error(
-                raw,
+            rescued = rescue_mcp_result(
+                result,
                 tool_info,
             )
 
