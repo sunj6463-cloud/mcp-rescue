@@ -9,7 +9,7 @@ from mcp import Client, StdioServerParameters
 from mcp_rescue.adapters.mcp import parse_mcp_result
 from mcp_rescue.classifier import rescue_error
 from mcp_rescue.models import ToolInfo
-
+from mcp_rescue.runtime import allow_automatic_retry
 
 # =========================
 # Qwen API
@@ -182,6 +182,13 @@ async def main():
                 tool_info,
             )
 
+            automatic_retry_allowed = allow_automatic_retry(rescued)
+
+            print(
+                "Automatic retry allowed:",
+                automatic_retry_allowed,
+            )
+            
             print("\nMCP-Rescue:")
             print("Category:", rescued.category)
             print("Action:", rescued.action)
@@ -236,12 +243,24 @@ async def main():
         print("\nQwen final response:")
         print(final_message.content)
 
-        # Debug:
-        # Did Qwen try another tool call?
         if final_message.tool_calls:
-            print("\nQwen requested another tool call:")
+            if not automatic_retry_allowed:
+                print("\n[Runtime]")
+                print("Blocked automatic tool retry.")
+
+                for call in final_message.tool_calls:
+                    print(
+                        "Blocked:",
+                        call.function.name,
+                        call.function.arguments,
+                    )
+
+                return
+
+            # 只有允许自动 retry 时，才可能继续执行
             for call in final_message.tool_calls:
                 print(
+                    "\nAutomatic retry allowed for:",
                     call.function.name,
                     call.function.arguments,
                 )
